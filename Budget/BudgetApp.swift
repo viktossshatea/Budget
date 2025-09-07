@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct BudgetApp: App {
+    @AppStorage("selectedLanguage") var selectedLanguage: String = "en"
+    @AppStorage("selectedCurrency") var selectedCurrency: String = "USD"
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
+                .preferredColorScheme(.light)
+                .environment(\.locale, Locale(identifier: selectedLanguage))
         }
     }
 }

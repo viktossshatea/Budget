@@ -6,3 +6,23 @@
   
 */
 
+"balance" = "BALANCE";
+"expenses" = "Expenses";
+"incomes" = "Incomes";
+
+"addTransaction" = "Add Transaction";
+"updateTransaction" = "Update Transaction";
+"changeLanguage" = "Change Language";
+"changeCurrency" = "Change Currency";
+"addTransactions" = "Add Transactions...";
+
+"shopping" = "Shopping";
+"groccery" = "Groccery";
+"cafe" = "Cafe";
+"rent" = "Rent";
+"transport" = "Transport";
+"subscription" = "Subscription";
+"gifts" = "Gifts";
+"education" = "Education";
+"health" = "Health";
+"salary" = "Salary";

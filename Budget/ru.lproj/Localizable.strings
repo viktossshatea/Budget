@@ -6,3 +6,23 @@
   
 */
 
+"balance" = "БАЛАНС";
+"expenses" = "Расходы";
+"incomes" = "Доходы";
+
+"addTransaction" = "Добавить Транзакцию";
+"updateTransaction" = "Обновить Транзакцию";
+"changeLanguage" = "Сменить Язык";
+"changeCurrency" = "Сменить Валюту";
+"addTransactions" = "Добовьте транзакции...";
+
+"shopping" = "Покупки";
+"groccery" = "Продукты";
+"cafe" = "Кафе";
+"rent" = "Аренда";
+"transport" = "Транспорт";
+"subscription" = "Подписки";
+"gifts" = "Подарки";
+"education" = "Образование";
+"health" = "Здоровье";
+"salary" = "Зарплата";
