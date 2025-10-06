@@ -15,6 +15,9 @@
 "changeLanguage" = "Change Language";
 "changeCurrency" = "Change Currency";
 "addTransactions" = "Add Transactions...";
+"sort" = "Sort";
+"date" = "Date:";
+"month" = "Month:";
 
 "shopping" = "Shopping";
 "groccery" = "Groccery";

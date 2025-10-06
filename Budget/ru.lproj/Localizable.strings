@@ -15,7 +15,9 @@
 "changeLanguage" = "Сменить Язык";
 "changeCurrency" = "Сменить Валюту";
 "addTransactions" = "Добовьте транзакции...";
-
+"sort" = "Отсортировать";
+"date" = "Дата:";
+"month" = "Месяц:";
 "shopping" = "Покупки";
 "groccery" = "Продукты";
 "cafe" = "Кафе";

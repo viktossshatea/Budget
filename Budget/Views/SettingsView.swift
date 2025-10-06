@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage("selectedLanguage") var selectedLanguage: String = "en"
     @AppStorage("selectedCurrency") var selectedCurrency: String = "USD"
+    @AppStorage("selectedLocale") var selectedLocale: String = "en_US"
     
     var body: some View {
         ZStack {
@@ -41,24 +42,28 @@ struct SettingsView: View {
                 HStack(spacing: 30) {
                     Button {
                         selectedCurrency = "RUB"
+                        selectedLocale = "ru_RU"
                     } label: {
                         Text("₽")
                             .font(.system(size: 30))
                     }
                     Button {
                         selectedCurrency = "USD"
+                        selectedLocale = "en_US_POSIX"
                     } label: {
                         Text("$")
                             .font(.system(size: 30))
                     }
                     Button {
                         selectedCurrency = "EUR"
+                        selectedLocale = "en_IE"
                     } label: {
                         Text("€")
                             .font(.system(size: 30))
                     }
                     Button {
                         selectedCurrency = "AMD"
+                        selectedLocale = "hy_AM"
                     } label: {
                         Text("֏")
                             .font(.system(size: 30))

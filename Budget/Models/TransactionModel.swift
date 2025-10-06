@@ -21,13 +21,15 @@ struct Transaction: Identifiable, Hashable {
         amountFormatter.numberStyle = .currency
         amountFormatter.currencyCode = AppStorageCurrency.shared.currency
         amountFormatter.maximumFractionDigits = 2
-        amountFormatter.locale = Locale(identifier: "en_US_POSIX")
+        amountFormatter.locale = Locale(identifier: AppStorageLocale.shared.locale)
         return amountFormatter.string(from: amount as NSNumber) ?? "0.00"
     }
-    
+
     var dateDisplay: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM"
-        return dateFormatter.string(from: date)
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
+        formatter.locale = Locale(identifier: AppStorageLocale.shared.locale)
+        return formatter.string(from: date)
     }
 }

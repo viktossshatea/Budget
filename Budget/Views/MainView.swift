@@ -36,7 +36,7 @@ struct MainView: View {
                                         .multilineTextAlignment(.leading)
                                         .padding(.leading, 30)
                                         .padding(.top, 40)
-                                    Text("\(String(viewModel.countBalance(viewModel.transactions)))\(Text(viewModel.currency( viewModel.selectedCurrency)))")
+                                    Text("\(viewModel.displayAmount(viewModel.countBalance(viewModel.transactions)))")
                                         .font(.system(size: 20))
                                         .foregroundStyle(.text)
                                         .multilineTextAlignment(.leading)
@@ -51,7 +51,7 @@ struct MainView: View {
                                     Text("\(Text("incomes")):")
                                         .font(.system(size: 20, weight: .medium))
                                         .foregroundStyle(.text)
-                                    Text("\(String(viewModel.countIncomes(viewModel.transactions)))\(Text(viewModel.currency( viewModel.selectedCurrency)))")
+                                    Text("\(viewModel.displayAmount(viewModel.countIncomes(viewModel.transactions)))")
                                         .font(.system(size: 20))
                                         .foregroundStyle(.text)
                                 }
@@ -60,7 +60,7 @@ struct MainView: View {
                                     Text("\(Text("expenses")):")
                                         .font(.system(size: 20, weight: .medium))
                                         .foregroundStyle(.text)
-                                    Text("\(String(viewModel.countExpenses(viewModel.transactions)))\(Text(viewModel.currency( viewModel.selectedCurrency)))")
+                                    Text("\(viewModel.displayAmount(viewModel.countExpenses(viewModel.transactions)))")
                                         .font(.system(size: 20))
                                         .foregroundStyle(.text)
                                 }
@@ -72,44 +72,69 @@ struct MainView: View {
                     }
                     .frame(height: 260)
                     
+                    
                     ZStack {
-                        VStack {
-                            if viewModel.transactions.isEmpty {
+                        if viewModel.transactions.isEmpty {
+                            VStack {
                                 Text("addTransactions")
                                     .opacity(0.5)
                                     .padding(.top, 100)
+                                Spacer()
                             }
-                            Spacer()
                         }
                         List {
-                            ForEach(viewModel.transactions.reversed()) { transaction in
-                                Button {
-                                    viewModel.transactionToEdit = transaction
-                                    viewModel.showAddTransactionSheet = true
-                                } label: {
-                                    HStack {
-                                        switch transaction.type {
-                                        case .income:
-                                            Image(systemName: "chevron.up")
-                                        case .expense:
-                                            Image(systemName: "chevron.down")
+                            Section {
+                                ForEach(viewModel.transactionsReversed ? Array(viewModel.transactions.reversed()) : viewModel.transactions) { transaction in
+                                    Button {
+                                        viewModel.transactionToEdit = transaction
+                                        viewModel.showAddTransactionSheet = true
+                                    } label: {
+                                        HStack {
+                                            switch transaction.type {
+                                            case .income:
+                                                Image(systemName: "chevron.up")
+                                            case .expense:
+                                                Image(systemName: "chevron.down")
+                                            }
+                                            Text(LocalizedStringKey(transaction.category.title))
+                                            Spacer()
+                                            Text(transaction.dateDisplay)
+                                            Text(String(transaction.amountDisplay))
                                         }
-                                        Text(LocalizedStringKey(transaction.category.title))
-                                        Spacer()
-                                        Text(String(transaction.amountDisplay))
+                                        .padding()
+                                        .frame(maxWidth: .infinity, minHeight: 60)
+                                        .glassEffect(.clear)
                                     }
-                                    .padding()
-                                    .frame(maxWidth: .infinity, minHeight: 60)
-                                    .glassEffect(.clear)
+                                    .buttonStyle(.plain)
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
                                 }
-                                .buttonStyle(.plain)
-                                .listRowBackground(Color.clear)
-                                .listRowSeparator(.hidden)
+                            } header: {
+                                if !viewModel.transactions.isEmpty {
+                                    HStack {
+                                        Button {
+                                            viewModel.transactionsReversed.toggle()
+                                        } label: {
+                                            HStack {
+                                                if viewModel.transactionsReversed == true {
+                                                    Text("sort")
+                                                    Image(systemName: "arrow.up")
+                                                } else if viewModel.transactionsReversed == false {
+                                                    Text("sort")
+                                                    Image(systemName: "arrow.down")
+                                                }
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                    .padding(.top, 10)
+                                }
                             }
                         }
                         .shadow(color: Color.text.opacity(0.1), radius: 10, x: 0, y: 4)
                         .scrollContentBackground(.hidden)
                         .foregroundStyle(.text)
+                        
                         
                         VStack {
                             Spacer()

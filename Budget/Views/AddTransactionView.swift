@@ -9,14 +9,16 @@ import SwiftUI
 
 struct AddTransactionView: View {
     @StateObject var viewModel = ViewModel()
-    @State var amount = ""
-    @State var descriptipon = ""
-    @State var selectedTransactionType: TransactionType = .income
-    @State var selectedTransactionCategory: TransactionCategory = .salary
+    @State private var amount = ""
+    @State private var descriptipon = ""
+    @State private var selectedTransactionType: TransactionType = .income
+    @State private var selectedTransactionCategory: TransactionCategory = .salary
+    @State private var day: Int = Calendar.current.component(.day, from: Date())
+    @State private var month: Int = Calendar.current.component(.month, from: Date())
     @Binding var isPresented : Bool
     @Binding var transactions: [Transaction]
     @Binding var transactionToEdit: Transaction?
-    @FocusState private var isFocusedAmount: Bool
+    @FocusState var isFocusedAmount: Bool
     
     var body: some View {
         ZStack {
@@ -61,6 +63,39 @@ struct AddTransactionView: View {
                 }
                 .padding(.vertical, 30)
                 
+                HStack {
+                    Text("date")
+                    Spacer()
+                    Text("month")
+                }
+                .padding(.horizontal, 75)
+                
+                HStack {
+                    Picker("date", selection: $day) {
+                        ForEach(1...31, id: \.self) {
+                            Text("\($0)")
+                                .font(.title)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .glassEffect(.clear)
+                    .clipShape(Capsule())
+                    .padding(.horizontal, 60)
+                    
+                    Picker("month", selection: $month) {
+                        ForEach(1...12, id: \.self) {
+                            Text("\($0)")
+                                .font(.title)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .glassEffect(.clear)
+                    .clipShape(Capsule())
+                    .padding(.horizontal, 60)
+                }
+                .padding(.bottom, 30)
+                
+            
                 TextField("Description...", text: $descriptipon)
                     .textFieldStyle(.plain)
                     .padding()
@@ -72,6 +107,7 @@ struct AddTransactionView: View {
                             .glassEffect(.clear)
                     )
                     .padding(.horizontal)
+                    .padding(.top, 30)
                 
                 Spacer()
                 
@@ -79,7 +115,13 @@ struct AddTransactionView: View {
                     VStack {
                         Spacer()
                         Button {
-                            let transaction = Transaction(category: selectedTransactionCategory, title: descriptipon, amount: Double(amount) ?? 0.00, type: selectedTransactionType, date: Date(), currency: viewModel.selectedCurrency)
+                            let year = Calendar.current.component(.year, from: Date())
+                            var comps = DateComponents()
+                            comps.year = year
+                            comps.month = month
+                            comps.day = day
+                            let pickedDate = Calendar.current.date(from: comps) ?? Date()
+                            let transaction = Transaction(category: selectedTransactionCategory, title: descriptipon, amount: Double(amount) ?? 0.00, type: selectedTransactionType, date: pickedDate, currency: viewModel.selectedCurrency)
                             
                             if transactionToEdit  != nil {
                                 if let index = transactions.firstIndex(of: transactionToEdit!) {
@@ -134,6 +176,9 @@ struct AddTransactionView: View {
                     selectedTransactionType = transactionToEdit!.type
                     selectedTransactionCategory = transactionToEdit!.category
                     descriptipon = transactionToEdit!.title
+                    let calendar = Calendar.current
+                    day = calendar.component(.day, from: transactionToEdit!.date)
+                            month = calendar.component(.month, from: transactionToEdit!.date)
                 }
             }
             

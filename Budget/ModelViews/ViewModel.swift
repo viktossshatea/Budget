@@ -11,16 +11,17 @@ import SwiftUI
 class ViewModel: ObservableObject {
     @AppStorage("selectedCurrency") var selectedCurrency: String = "USD"
     @Published var transactions : [Transaction] = [
-//        Transaction(category: .shopping, title: "Shopping", amount: 22.5, type: .expense, date: Date()),
-//        Transaction(category: .salary, title: "TgPrems", amount: 425, type: .income, date: Date()),
-//        Transaction(category: .shopping, title: "Camera", amount: 300, type: .expense, date: Date()),
-//        Transaction(category: .shopping, title: "Shopping", amount: 22.5, type: .expense, date: Date()),
-//        Transaction(category: .salary, title: "Donation", amount: 30, type: .income, date: Date()),
-//        Transaction(category: .cafe, title: "Coffee", amount: 4.5, type: .expense, date: Date())
+        Transaction(category: .shopping, title: "Shopping", amount: 22.5, type: .expense, date: Date(), currency: "USD"),
+        Transaction(category: .salary, title: "TgPrems", amount: 425, type: .income, date: Date(), currency: "USD"),
+        Transaction(category: .shopping, title: "Camera", amount: 300, type: .expense, date: Date(), currency: "USD"),
+        Transaction(category: .shopping, title: "Shopping", amount: 22.5, type: .expense, date: Date(), currency: "USD"),
+        Transaction(category: .salary, title: "Donation", amount: 30, type: .income, date: Date(), currency: "USD"),
+        Transaction(category: .cafe, title: "Coffee", amount: 4.5, type: .expense, date: Date(), currency: "USD")
     ]
     @Published var showAddTransactionSheet = false
     @Published var showSettingsSheet = false
     @Published var transactionToEdit : Transaction?
+    @Published var transactionsReversed: Bool = true
     
     func countIncomes(_ transactions: [Transaction]) -> Double {
         var incomesSumm = 0.0
@@ -52,6 +53,15 @@ class ViewModel: ObservableObject {
             }
         }
         return balance
+    }
+    
+    func displayAmount(_ amount: Double) -> String {
+        let amountFormatter = NumberFormatter()
+        amountFormatter.numberStyle = .currency
+        amountFormatter.currencyCode = AppStorageCurrency.shared.currency
+        amountFormatter.maximumFractionDigits = 2
+        amountFormatter.locale = Locale(identifier: AppStorageLocale.shared.locale)
+        return amountFormatter.string(from: amount as NSNumber) ?? "0.00"
     }
     
     func currency(_ currency: String) -> String {

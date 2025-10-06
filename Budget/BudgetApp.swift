@@ -11,6 +11,7 @@ import SwiftUI
 struct BudgetApp: App {
     @AppStorage("selectedLanguage") var selectedLanguage: String = "en"
     @AppStorage("selectedCurrency") var selectedCurrency: String = "USD"
+    @AppStorage("selectedLocale") var selectedLocale: String = "en_US"
     var body: some Scene {
         WindowGroup {
             MainView()
