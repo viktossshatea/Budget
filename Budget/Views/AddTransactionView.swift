@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddTransactionView: View {
     @EnvironmentObject var viewModel: ViewModel
+    @Environment(\.modelContext) var context
     @State private var amount = ""
     @State private var title = ""
     @State private var selectedTransactionType: TransactionType = .income
@@ -18,7 +19,7 @@ struct AddTransactionView: View {
     @Binding var isPresented : Bool
     @Binding var transactionToEdit: TransactionModel?
     @FocusState var isFocusedAmount: Bool
-    @Environment(\.modelContext) var context
+    
     
     var body: some View {
         ZStack {

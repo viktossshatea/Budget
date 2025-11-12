@@ -16,11 +16,11 @@ struct BudgetApp: App {
         WindowGroup {
             MainView()
                 .modelContainer(for: [
-                    TransactionModel.self
+                    TransactionModel.self,
+                    AppCurrency.self,
+                    AppLocale.self,
+                    AppLanguage.self
                 ])
-                .modelContainer(for: AppCurrency.self)
-                .modelContainer(for: AppLocale.self)
-                .modelContainer(for: AppLanguage.self)
                 .preferredColorScheme(.light)
                 .environment(\.locale, Locale(identifier: viewModel.language))
                 .environmentObject(viewModel)
