@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TransactionCategory: String, Identifiable, CaseIterable {
+enum TransactionCategory: String, Identifiable, CaseIterable, Codable {
     case shopping
     case groccery
     case cafe

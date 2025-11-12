@@ -5,7 +5,7 @@
 //  Created by  Виктория on 31.08.2025.
 //
 
-enum TransactionType : String, CaseIterable, Identifiable {
+enum TransactionType : String, CaseIterable, Identifiable, Codable {
     case income
     case expense
     

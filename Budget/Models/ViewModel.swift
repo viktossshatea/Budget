@@ -7,23 +7,18 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 class ViewModel: ObservableObject {
-    @AppStorage("selectedCurrency") var selectedCurrency: String = "USD"
-    @Published var transactions : [Transaction] = [
-        Transaction(category: .shopping, title: "Shopping", amount: 22.5, type: .expense, date: Date(), currency: "USD"),
-        Transaction(category: .salary, title: "TgPrems", amount: 425, type: .income, date: Date(), currency: "USD"),
-        Transaction(category: .shopping, title: "Camera", amount: 300, type: .expense, date: Date(), currency: "USD"),
-        Transaction(category: .shopping, title: "Shopping", amount: 22.5, type: .expense, date: Date(), currency: "USD"),
-        Transaction(category: .salary, title: "Donation", amount: 30, type: .income, date: Date(), currency: "USD"),
-        Transaction(category: .cafe, title: "Coffee", amount: 4.5, type: .expense, date: Date(), currency: "USD")
-    ]
     @Published var showAddTransactionSheet = false
     @Published var showSettingsSheet = false
-    @Published var transactionToEdit : Transaction?
+    @Published var transactionToEdit : TransactionModel?
     @Published var transactionsReversed: Bool = true
+    @Published var language = AppLanguage().code
+    @Published var currency = AppCurrency().code
+    @Published var locale = AppLocale().code
     
-    func countIncomes(_ transactions: [Transaction]) -> Double {
+    func countIncomes(_ transactions: [TransactionModel]) -> Double {
         var incomesSumm = 0.0
         for transaction in transactions {
             if transaction.type == .income {
@@ -33,7 +28,7 @@ class ViewModel: ObservableObject {
         return incomesSumm
     }
     
-    func countExpenses(_ transactions: [Transaction]) -> Double {
+    func countExpenses(_ transactions: [TransactionModel]) -> Double {
         var ExpensesSumm = 0.0
         for transaction in transactions {
             if transaction.type == .expense {
@@ -43,7 +38,7 @@ class ViewModel: ObservableObject {
         return ExpensesSumm
     }
     
-    func countBalance(_ transactions: [Transaction]) -> Double {
+    func countBalance(_ transactions: [TransactionModel]) -> Double {
         var balance = 0.0
         for transaction in transactions {
             if transaction.type == .income {
@@ -58,10 +53,18 @@ class ViewModel: ObservableObject {
     func displayAmount(_ amount: Double) -> String {
         let amountFormatter = NumberFormatter()
         amountFormatter.numberStyle = .currency
-        amountFormatter.currencyCode = AppStorageCurrency.shared.currency
+        amountFormatter.currencyCode = currency
         amountFormatter.maximumFractionDigits = 2
-        amountFormatter.locale = Locale(identifier: AppStorageLocale.shared.locale)
+        amountFormatter.locale = Locale(identifier: locale)
         return amountFormatter.string(from: amount as NSNumber) ?? "0.00"
+    }
+
+    func delete(offsets: IndexSet, from: [TransactionModel], context: ModelContext) {
+        for index in offsets {
+            let transactionToDelete = from[index]
+            context.delete(transactionToDelete)
+            try? context.save()
+        }
     }
     
     func currency(_ currency: String) -> String {

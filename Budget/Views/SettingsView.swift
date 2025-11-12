@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("selectedLanguage") var selectedLanguage: String = "en"
-    @AppStorage("selectedCurrency") var selectedCurrency: String = "USD"
-    @AppStorage("selectedLocale") var selectedLocale: String = "en_US"
+    @EnvironmentObject var viewModel: ViewModel
     
-    var body: some View {
+        var body: some View {
         ZStack {
             Color.main
                 .ignoresSafeArea()
@@ -23,13 +21,13 @@ struct SettingsView: View {
                     .fontWeight(.medium)
                 HStack(spacing: 30) {
                     Button {
-                        selectedLanguage = "ru"
+                        viewModel.language = AppLanguage(language: "ru_RU").code
                     } label: {
                         Text("🇷🇺")
                             .font(.system(size: 40))
                     }
                     Button {
-                        selectedLanguage = "en"
+                        viewModel.language = AppLanguage(language: "en_US").code
                     } label: {
                         Text("🇺🇸")
                             .font(.system(size: 40))
@@ -41,29 +39,29 @@ struct SettingsView: View {
                     .fontWeight(.medium)
                 HStack(spacing: 30) {
                     Button {
-                        selectedCurrency = "RUB"
-                        selectedLocale = "ru_RU"
+                        viewModel.currency = AppCurrency(currency: "RUB").code
+                        viewModel.locale = AppLocale(locale: "ru_RU").code
                     } label: {
                         Text("₽")
                             .font(.system(size: 30))
                     }
                     Button {
-                        selectedCurrency = "USD"
-                        selectedLocale = "en_US_POSIX"
+                        viewModel.currency = AppCurrency(currency: "USD").code
+                        viewModel.locale = AppLocale(locale: "en_US_POSTIX").code
                     } label: {
                         Text("$")
                             .font(.system(size: 30))
                     }
                     Button {
-                        selectedCurrency = "EUR"
-                        selectedLocale = "en_IE"
+                        viewModel.currency = AppCurrency(currency: "EUR").code
+                        viewModel.locale = AppLocale(locale: "en_IE").code
                     } label: {
                         Text("€")
                             .font(.system(size: 30))
                     }
                     Button {
-                        selectedCurrency = "AMD"
-                        selectedLocale = "hy_AM"
+                        viewModel.currency = AppCurrency(currency: "AMD").code
+                        viewModel.locale = AppLocale(locale: "hy_AM").code
                     } label: {
                         Text("֏")
                             .font(.system(size: 30))

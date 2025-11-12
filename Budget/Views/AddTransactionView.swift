@@ -8,24 +8,24 @@
 import SwiftUI
 
 struct AddTransactionView: View {
-    @StateObject var viewModel = ViewModel()
+    @EnvironmentObject var viewModel: ViewModel
     @State private var amount = ""
-    @State private var descriptipon = ""
+    @State private var title = ""
     @State private var selectedTransactionType: TransactionType = .income
     @State private var selectedTransactionCategory: TransactionCategory = .salary
     @State private var day: Int = Calendar.current.component(.day, from: Date())
     @State private var month: Int = Calendar.current.component(.month, from: Date())
     @Binding var isPresented : Bool
-    @Binding var transactions: [Transaction]
-    @Binding var transactionToEdit: Transaction?
+    @Binding var transactionToEdit: TransactionModel?
     @FocusState var isFocusedAmount: Bool
+    @Environment(\.modelContext) var context
     
     var body: some View {
         ZStack {
             Color.main
                 .ignoresSafeArea()
             VStack {
-                TextField("\(viewModel.currency(viewModel.selectedCurrency))0.00", text: $amount)
+                TextField("\(viewModel.currency(viewModel.currency))0.00", text: $amount)
                     .onChange(of: amount) { _, newAmount in
                         amount = newAmount.replacingOccurrences(of: ",", with: ".")
                     }
@@ -96,7 +96,7 @@ struct AddTransactionView: View {
                 .padding(.bottom, 30)
                 
             
-                TextField("Description...", text: $descriptipon)
+                TextField("Description...", text: $title)
                     .textFieldStyle(.plain)
                     .padding()
                     .frame(minHeight: 50)
@@ -121,15 +121,17 @@ struct AddTransactionView: View {
                             comps.month = month
                             comps.day = day
                             let pickedDate = Calendar.current.date(from: comps) ?? Date()
-                            let transaction = Transaction(category: selectedTransactionCategory, title: descriptipon, amount: Double(amount) ?? 0.00, type: selectedTransactionType, date: pickedDate, currency: viewModel.selectedCurrency)
                             
-                            if transactionToEdit  != nil {
-                                if let index = transactions.firstIndex(of: transactionToEdit!) {
-                                    transactions[index] = transaction
-                                }
+                            if let existingTransaction = transactionToEdit {
+                                existingTransaction.title = title
+                                existingTransaction.amount = Double(amount) ?? 0.00
+                                existingTransaction.category = selectedTransactionCategory
+                                existingTransaction.type = selectedTransactionType
                             } else {
-                                transactions.append(transaction)
+                                let transaction = TransactionModel(category: selectedTransactionCategory, title: title, amount: Double(amount) ?? 0.00, type: selectedTransactionType, date: pickedDate, currency: viewModel.currency, locale: viewModel.locale)
+                                context.insert(transaction)
                             }
+                            
                             isPresented = false
                             transactionToEdit = nil
                             
@@ -144,30 +146,6 @@ struct AddTransactionView: View {
                             }
                         }
                     }
-                    
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            if transactionToEdit != nil {
-                                Button {
-                                    transactions.removeAll { $0 == transactionToEdit! }
-                                    isPresented = false
-                                    transactionToEdit = nil
-                                } label: {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.clear)
-                                            .frame(width: 50, height: 50)
-                                            .glassEffect(.clear.tint(Color.white))
-                                        Image(systemName: "trash")
-                                            .foregroundStyle(Color.text)
-                                    }
-                                    .padding(.trailing)
-                                }
-                            }
-                        }
-                    }
                 }
             }
             .onAppear {
@@ -175,7 +153,7 @@ struct AddTransactionView: View {
                     amount = String(transactionToEdit!.amount)
                     selectedTransactionType = transactionToEdit!.type
                     selectedTransactionCategory = transactionToEdit!.category
-                    descriptipon = transactionToEdit!.title
+                    title = transactionToEdit!.title
                     let calendar = Calendar.current
                     day = calendar.component(.day, from: transactionToEdit!.date)
                             month = calendar.component(.month, from: transactionToEdit!.date)
@@ -199,6 +177,6 @@ struct AddTransactionView: View {
     }
 }
 #Preview {
-    AddTransactionView(isPresented: .constant(true), transactions: .constant([]), transactionToEdit: .constant(Transaction(category: .shopping, title: "Shopping", amount: 22.5, type: .expense, date: Date(), currency: "USD")))
-        .environment(\.locale, .init(identifier: "en"))
+    AddTransactionView(isPresented: .constant(true), transactionToEdit: .constant(TransactionModel(category: .groccery, title: "Grocery shopping", amount: 25, type: .expense, date: Date(), currency: "USD", locale: "en_US")))
+        .environment(\.locale, Locale(identifier: "en_US"))
 }

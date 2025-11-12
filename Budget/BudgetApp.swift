@@ -6,17 +6,24 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct BudgetApp: App {
-    @AppStorage("selectedLanguage") var selectedLanguage: String = "en"
-    @AppStorage("selectedCurrency") var selectedCurrency: String = "USD"
-    @AppStorage("selectedLocale") var selectedLocale: String = "en_US"
+    @StateObject var viewModel = ViewModel()
+    
     var body: some Scene {
         WindowGroup {
             MainView()
+                .modelContainer(for: [
+                    TransactionModel.self
+                ])
+                .modelContainer(for: AppCurrency.self)
+                .modelContainer(for: AppLocale.self)
+                .modelContainer(for: AppLanguage.self)
                 .preferredColorScheme(.light)
-                .environment(\.locale, Locale(identifier: selectedLanguage))
+                .environment(\.locale, Locale(identifier: viewModel.language))
+                .environmentObject(viewModel)
         }
     }
 }

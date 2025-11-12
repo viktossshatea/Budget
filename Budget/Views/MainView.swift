@@ -6,9 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MainView: View {
-    @StateObject private var viewModel = ViewModel()
+    @EnvironmentObject var viewModel: ViewModel
+    
+    @Query var transactions: [TransactionModel]
+    
+    @Environment(\.modelContext) var context
     
     var body: some View {
         NavigationStack {
@@ -36,7 +41,7 @@ struct MainView: View {
                                         .multilineTextAlignment(.leading)
                                         .padding(.leading, 30)
                                         .padding(.top, 40)
-                                    Text("\(viewModel.displayAmount(viewModel.countBalance(viewModel.transactions)))")
+                                    Text("\(viewModel.displayAmount(viewModel.countBalance(transactions)))")
                                         .font(.system(size: 20))
                                         .foregroundStyle(.text)
                                         .multilineTextAlignment(.leading)
@@ -51,7 +56,7 @@ struct MainView: View {
                                     Text("\(Text("incomes")):")
                                         .font(.system(size: 20, weight: .medium))
                                         .foregroundStyle(.text)
-                                    Text("\(viewModel.displayAmount(viewModel.countIncomes(viewModel.transactions)))")
+                                    Text("\(viewModel.displayAmount(viewModel.countIncomes(transactions)))")
                                         .font(.system(size: 20))
                                         .foregroundStyle(.text)
                                 }
@@ -60,7 +65,7 @@ struct MainView: View {
                                     Text("\(Text("expenses")):")
                                         .font(.system(size: 20, weight: .medium))
                                         .foregroundStyle(.text)
-                                    Text("\(viewModel.displayAmount(viewModel.countExpenses(viewModel.transactions)))")
+                                    Text("\(viewModel.displayAmount(viewModel.countExpenses(transactions)))")
                                         .font(.system(size: 20))
                                         .foregroundStyle(.text)
                                 }
@@ -74,7 +79,7 @@ struct MainView: View {
                     
                     
                     ZStack {
-                        if viewModel.transactions.isEmpty {
+                        if transactions.isEmpty {
                             VStack {
                                 Text("addTransactions")
                                     .opacity(0.5)
@@ -84,7 +89,7 @@ struct MainView: View {
                         }
                         List {
                             Section {
-                                ForEach(viewModel.transactionsReversed ? Array(viewModel.transactions.reversed()) : viewModel.transactions) { transaction in
+                                ForEach(viewModel.transactionsReversed ? Array(transactions.reversed()) : transactions) { transaction in
                                     Button {
                                         viewModel.transactionToEdit = transaction
                                         viewModel.showAddTransactionSheet = true
@@ -109,8 +114,11 @@ struct MainView: View {
                                     .listRowBackground(Color.clear)
                                     .listRowSeparator(.hidden)
                                 }
+                                .onDelete { offsets in
+                                    viewModel.delete(offsets: offsets, from: transactions, context: context)
+                                }
                             } header: {
-                                if !viewModel.transactions.isEmpty {
+                                if !transactions.isEmpty {
                                     HStack {
                                         Button {
                                             viewModel.transactionsReversed.toggle()
@@ -178,7 +186,7 @@ struct MainView: View {
             }
         }
         .sheet(isPresented: $viewModel.showAddTransactionSheet) {
-            AddTransactionView(isPresented: $viewModel.showAddTransactionSheet, transactions: $viewModel.transactions, transactionToEdit: $viewModel.transactionToEdit)
+            AddTransactionView(isPresented: $viewModel.showAddTransactionSheet, transactionToEdit: $viewModel.transactionToEdit)
         }
         .sheet(isPresented: $viewModel.showSettingsSheet) {
             SettingsView()
